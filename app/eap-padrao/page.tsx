@@ -44,9 +44,9 @@ export default async function EapPadraoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-8 dark:bg-zinc-900">
+    <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-900">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-6 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+        <h1 className="mb-5 text-[20px] font-semibold text-zinc-900 dark:text-zinc-50">
           EAP Padrão
         </h1>
 
@@ -55,13 +55,13 @@ export default async function EapPadraoPage() {
             <table className="min-w-full">
               <thead className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Código
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Item
                   </th>
-                  <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-center text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Nível
                   </th>
                 </tr>
@@ -74,17 +74,17 @@ export default async function EapPadraoPage() {
                       key={eap.id}
                       className={`${levelStyle.className} hover:bg-zinc-50 dark:hover:bg-zinc-700/50`}
                     >
-                      <td className="whitespace-nowrap px-6 py-3 text-sm font-mono">
+                      <td className="whitespace-nowrap px-4 py-2 font-mono text-[13px]">
                         {eap.caminho}
                       </td>
                       <td
-                        className="px-6 py-3 text-sm"
-                        style={{ paddingLeft: `${24 + (eap.nivel - 1) * 24}px` }}
+                        className="px-4 py-2 text-[13px]"
+                        style={{ paddingLeft: `${16 + (eap.nivel - 1) * 20}px` }}
                       >
                         {eap.item}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-3 text-center text-sm">
-                        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-zinc-200 text-xs dark:bg-zinc-600">
+                      <td className="whitespace-nowrap px-4 py-2 text-center">
+                        <span className="inline-flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 text-[11px] dark:bg-zinc-600">
                           {eap.nivel}
                         </span>
                       </td>
@@ -96,13 +96,13 @@ export default async function EapPadraoPage() {
           </div>
         ) : (
           <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-800">
-            <p className="text-zinc-500 dark:text-zinc-400">
+            <p className="text-[14px] text-zinc-500 dark:text-zinc-400">
               Nenhum item de EAP padrão encontrado.
             </p>
           </div>
         )}
 
-        <div className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
+        <div className="mt-3 text-[12px] text-zinc-500 dark:text-zinc-400">
           Total de itens: {eapItems?.length ?? 0}
         </div>
       </div>

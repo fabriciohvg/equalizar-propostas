@@ -59,18 +59,18 @@ function ComparisonBar({
   if (total === 0) {
     return (
       <div className="flex flex-col gap-1">
-        <div className="text-sm text-zinc-400 dark:text-zinc-500">-</div>
-        <div className="h-4 w-full rounded bg-zinc-100 dark:bg-zinc-700" />
+        <div className="text-[13px] text-zinc-400 dark:text-zinc-500">-</div>
+        <div className="h-3 w-full rounded bg-zinc-100 dark:bg-zinc-700" />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-1">
-      <span className={`text-sm font-medium ${getTextColor()}`}>
+      <span className={`font-mono text-[13px] font-medium ${getTextColor()}`}>
         {formatCurrency(total)}
       </span>
-      <div className="relative h-4 w-full rounded bg-zinc-100 dark:bg-zinc-700">
+      <div className="relative h-3 w-full rounded bg-zinc-100 dark:bg-zinc-700">
         <div
           className={`h-full rounded transition-all duration-300 ${getBarColor()}`}
           style={{ width: `${barWidth}%` }}
@@ -107,7 +107,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
       columnHelper.display({
         id: "eapPadrao",
         header: () => (
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
             EAP Padrão
           </span>
         ),
@@ -119,7 +119,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
           return (
             <div
               className="flex items-center gap-2"
-              style={{ paddingLeft: `${depth * 20}px` }}
+              style={{ paddingLeft: `${depth * 18}px` }}
             >
               {canExpand ? (
                 <button
@@ -143,10 +143,10 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
               ) : (
                 <div className="w-5 shrink-0" />
               )}
-              <span className="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+              <span className="font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
                 {node.caminho}
               </span>
-              <span className="truncate text-sm">{node.item}</span>
+              <span className="truncate text-[13px]">{node.item}</span>
             </div>
           );
         },
@@ -160,7 +160,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
         columnHelper.display({
           id: `proposta-${proposta.id}`,
           header: () => (
-            <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               {proposta.construtora_nome}
             </span>
           ),
@@ -206,7 +206,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
           return (
             <Link
               href={`/equalizacao/${node.id}`}
-              className="inline-flex items-center gap-1 rounded px-2 py-1 text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
+              className="inline-flex items-center gap-1 rounded px-2 py-1 text-[12px] font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-100"
             >
               <svg
                 className="h-4 w-4"
@@ -264,32 +264,32 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
-        <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-emerald-500" />
+      <div className="flex items-center gap-4 text-[12px] text-zinc-600 dark:text-zinc-400">
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded bg-emerald-500" />
           <span>Menor valor</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-amber-500" />
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded bg-amber-500" />
           <span>Valor intermediário</span>
         </div>
-        <div className="flex items-center gap-1">
-          <div className="h-3 w-3 rounded bg-rose-500" />
+        <div className="flex items-center gap-1.5">
+          <div className="h-2.5 w-2.5 rounded bg-rose-500" />
           <span>Maior valor</span>
         </div>
       </div>
 
       {/* Summary cards */}
-      <div className="flex gap-4 overflow-x-auto pb-2">
+      <div className="flex gap-3 overflow-x-auto pb-2">
         {propostas.map((proposta) => (
           <div
             key={proposta.id}
-            className="min-w-[180px] shrink-0 rounded-lg border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="min-w-[160px] shrink-0 rounded-lg border border-zinc-200 bg-white px-4 py-3 shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
           >
-            <div className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            <div className="text-[13px] font-medium text-zinc-900 dark:text-zinc-100">
               {proposta.construtora_nome}
             </div>
-            <div className="mt-1 text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+            <div className="mt-1 font-mono text-[17px] font-semibold text-zinc-900 dark:text-zinc-50">
               {formatCurrency(proposta.valor_total)}
             </div>
           </div>
@@ -305,7 +305,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
                 {headerGroup.headers.map((header, index) => (
                   <th
                     key={header.id}
-                    className={`px-4 py-3 text-left ${index === 0 ? "min-w-[300px]" : "min-w-[200px]"} ${index > 0 ? "border-l border-zinc-300 dark:border-zinc-600" : ""}`}
+                    className={`px-3 py-2.5 text-left ${index === 0 ? "min-w-[300px]" : "min-w-[180px]"} ${index > 0 ? "border-l border-zinc-300 dark:border-zinc-600" : ""}`}
                   >
                     {header.isPlaceholder
                       ? null
@@ -327,7 +327,7 @@ export function EqualizacaoTable({ data, propostas }: EqualizacaoTableProps) {
                 {row.getVisibleCells().map((cell, index) => (
                   <td
                     key={cell.id}
-                    className={`px-4 py-2 ${index > 0 ? "border-l border-zinc-200 dark:border-zinc-700" : ""}`}
+                    className={`px-3 py-1.5 ${index > 0 ? "border-l border-zinc-200 dark:border-zinc-700" : ""}`}
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>

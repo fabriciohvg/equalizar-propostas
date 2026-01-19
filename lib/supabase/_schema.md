@@ -70,6 +70,18 @@ create table public.eap_proposta (
   created_at timestamp with time zone null default now(),
   item_order integer null,
   item_unit_total_price_subtotal numeric(15, 2) null default 0,
+  tag text null check (tag in (
+    'cortesia',
+    'estimativa',
+    'estimativa + pendência',
+    'não cotado + sob demanda',
+    'não cotado + pendência',
+    'opcional',
+    'opcional + revisar escopo',
+    'revisar escopo',
+    'condicional'
+  )),
+  hidden_from_equalization boolean not null default false,
   constraint eap_proposta_pkey primary key (id),
   constraint eap_proposta_proposta_id_fkey foreign KEY (proposta_id) references propostas (id) on delete CASCADE
 ) TABLESPACE pg_default;

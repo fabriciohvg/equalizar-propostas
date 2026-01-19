@@ -37,6 +37,8 @@ The database schema is defined in `lib/supabase/_schema.md`. The data model foll
 4. **eap_proposta** - WBS (Work Breakdown Structure) for each proposal
    - `section_*` fields: Top-level WBS items
    - `item_*` fields: Line items with quantities, costs, and pricing details
+   - `tag` field: Item classification (cortesia, estimativa, opcional, etc.)
+   - `hidden_from_equalization` field: Boolean to exclude items from equalization views
 5. **eap_padrao** - Standard WBS reference for bid leveling (4 levels deep)
    - Uses PostgreSQL `ltree` type for hierarchical path storage
    - `caminho` field stores the tree path (e.g., "1.2.3.4")
@@ -75,11 +77,13 @@ app/
 ├── layout.tsx              # Root layout with Nav component
 ├── page.tsx                # Landing page with quick links
 ├── components/
-│   └── Nav.tsx             # Navigation header (client component)
+│   ├── Nav.tsx             # Navigation header (client component)
+│   └── Sheet.tsx           # Reusable slide-in panel component
 ├── propostas/
 │   ├── page.tsx            # List of received proposals
 │   └── [id]/
-│       └── page.tsx        # Proposal detail with items by section
+│       ├── page.tsx        # Proposal detail with items by section
+│       └── PropostaItemsTable.tsx  # TanStack Table with tag/hidden controls
 ├── eap-padrao/
 │   └── page.tsx            # Reference WBS tree view
 └── equalizacao/
@@ -87,8 +91,9 @@ app/
     ├── types.ts            # Shared TypeScript interfaces
     ├── EqualizacaoTable.tsx # TanStack Table with tree expansion
     └── [id]/
-        ├── page.tsx        # WBS item detail comparison
-        └── ItemsTable.tsx  # Condensed items table per proposal
+        ├── page.tsx        # WBS item detail comparison (fetches level 1 WBS)
+        ├── ItemsTable.tsx  # Condensed items table with detail sheet
+        └── ItemSheet.tsx   # Item detail slide-in panel
 ```
 
 ### Navigation
@@ -157,15 +162,107 @@ const columns = useMemo(() => {
 - 🟡 Amber (`bg-amber-500`) - Intermediate value
 - 🔴 Rose (`bg-rose-500`) - Highest value
 
+### Typography
+- **Font family**: Inter (sans-serif) + JetBrains Mono (monospace)
+- **Table headers**: `text-[11px] font-semibold uppercase tracking-wide`
+- **Table cells**: `text-[13px]`
+- **Currency/numbers**: `font-mono text-[13px]`
+- **Page titles**: `text-[20px]` to `text-[28px]`
+- **Navigation**: `text-[13px]` to `text-[15px]`
+
 ### Condensed Table Design
-- Font sizes: `text-[10px]` to `text-xs` for dense data
 - Monospace font (`font-mono`) for currency alignment
 - Truncated text with `title` attribute for hover tooltip
-- Minimal padding: `px-2 py-1.5`
+- Minimal padding: `px-2 py-1.5` or `px-3 py-2.5`
 
 ### Tree Indentation
 ```typescript
 style={{ paddingLeft: `${depth * 20}px` }}
+```
+
+### Sheet Component (`components/Sheet.tsx`)
+Reusable slide-in panel from the right side:
+```typescript
+<Sheet isOpen={isOpen} onClose={onClose} title="Title">
+  {children}
+</Sheet>
+```
+Features:
+- Backdrop with click-to-close
+- Escape key to close
+- Body scroll lock when open
+- Dark mode support
+
+### Hover-to-Show Actions
+Pattern for showing action buttons only on row hover:
+```typescript
+const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
+
+// In column definition
+columnHelper.display({
+  id: "actions",
+  cell: ({ row }) => (
+    <div className={`transition-opacity ${hoveredRowId === row.id ? "opacity-100" : "opacity-0"}`}>
+      <button onClick={() => handleAction(row.original)}>...</button>
+    </div>
+  ),
+});
+
+// In row render
+<tr onMouseEnter={() => setHoveredRowId(row.id)} onMouseLeave={() => setHoveredRowId(null)}>
+```
+
+### Item Detail Sheets
+Two sheet components for displaying item details:
+- `ItemDetailSheet` (inside `ItemsTable.tsx`): Full item detail with WBS reference dropdown for linking items
+- `ItemSheet.tsx`: Simplified item detail view showing description, quantities, and pricing
+
+Both display:
+- Description, quantity, and unit
+- Unit prices (material/labor)
+- Total prices with subtotal
+
+### Item Tagging System
+Items in `eap_proposta` can be tagged for classification. Tags are managed in `propostas/[id]` and displayed as badges in equalization views.
+
+**Available tags:**
+- `cortesia` - Purple badge
+- `estimativa`, `estimativa + pendência` - Blue badge
+- `não cotado + sob demanda`, `não cotado + pendência` - Orange badge
+- `opcional`, `opcional + revisar escopo` - Gray badge
+- `revisar escopo` - Yellow badge
+- `condicional` - Cyan badge
+
+**Tag type definition** (`equalizacao/types.ts`):
+```typescript
+export type EapPropostaTag =
+  | "cortesia" | "estimativa" | "estimativa + pendência"
+  | "não cotado + sob demanda" | "não cotado + pendência"
+  | "opcional" | "opcional + revisar escopo"
+  | "revisar escopo" | "condicional";
+```
+
+### Hiding Items from Equalization
+Items can be marked as hidden from equalization (e.g., note lines, WBS summaries) via checkbox in `propostas/[id]`. Hidden items are filtered out in both `/equalizacao` and `/equalizacao/[id]` pages.
+
+Pattern for optimistic updates:
+```typescript
+const handleHiddenChange = async (itemId: string, hidden: boolean) => {
+  // Optimistic update
+  setSections((prev) => prev.map((section) => ({
+    ...section,
+    items: section.items.map((item) =>
+      item.id === itemId ? { ...item, hidden_from_equalization: hidden } : item
+    ),
+  })));
+
+  const { error } = await supabase
+    .from("eap_proposta")
+    .update({ hidden_from_equalization: hidden })
+    .eq("id", itemId);
+
+  if (error) setSections(initialSections); // Revert on error
+};
 ```
 
 ## TypeScript Configuration

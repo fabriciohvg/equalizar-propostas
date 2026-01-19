@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import type { EapPropostaTag } from "../types";
 
 interface PropostaItem {
   id: string;
@@ -12,6 +13,7 @@ interface PropostaItem {
   item_total_price_material: number | null;
   item_total_price_labor: number | null;
   item_total_price_subtotal: number | null;
+  tag: EapPropostaTag | null;
 }
 
 interface ItemSheetProps {

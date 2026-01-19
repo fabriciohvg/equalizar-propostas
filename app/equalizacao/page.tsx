@@ -17,6 +17,8 @@ interface EqualizacaoData {
     proposta_id: string;
     item_description: string | null;
     item_total_price_subtotal: number | null;
+    tag: string | null;
+    hidden_from_equalization: boolean;
   };
 }
 
@@ -44,7 +46,9 @@ export default async function EqualizacaoPage() {
         id,
         proposta_id,
         item_description,
-        item_total_price_subtotal
+        item_total_price_subtotal,
+        tag,
+        hidden_from_equalization
       )
     `)
     .limit(10000);
@@ -78,7 +82,8 @@ export default async function EqualizacaoPage() {
     const eapPadraoId = eq.eap_padrao_id;
     const eapProposta = eq.eap_proposta;
 
-    if (!eapProposta) continue;
+    // Skip if no proposta or if item is hidden from equalization
+    if (!eapProposta || eapProposta.hidden_from_equalization) continue;
 
     if (!matrix[eapPadraoId]) {
       matrix[eapPadraoId] = {};
@@ -93,6 +98,7 @@ export default async function EqualizacaoPage() {
       id: eapProposta.id,
       item_description: eapProposta.item_description,
       item_total_price_subtotal: eapProposta.item_total_price_subtotal,
+      tag: eapProposta.tag as LinkedItem["tag"],
     });
   }
 

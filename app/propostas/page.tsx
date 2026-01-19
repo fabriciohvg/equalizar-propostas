@@ -53,9 +53,9 @@ export default async function PropostasPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 p-8 dark:bg-zinc-900">
+    <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-900">
       <div className="mx-auto max-w-6xl">
-        <h1 className="mb-6 text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+        <h1 className="mb-5 text-[20px] font-semibold text-zinc-900 dark:text-zinc-50">
           Propostas Recebidas
         </h1>
 
@@ -64,22 +64,22 @@ export default async function PropostasPage() {
             <table className="min-w-full divide-y divide-zinc-200 dark:divide-zinc-700">
               <thead className="bg-zinc-50 dark:bg-zinc-900">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Construtora
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Obra
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Data Referência
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Valor Total
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+                  <th className="px-4 py-2.5 text-right text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                     Ações
                   </th>
                 </tr>
@@ -90,29 +90,29 @@ export default async function PropostasPage() {
                     key={proposta.id}
                     className="hover:bg-zinc-50 dark:hover:bg-zinc-700"
                   >
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    <td className="whitespace-nowrap px-4 py-3 text-[13px] font-medium text-zinc-900 dark:text-zinc-100">
                       {(proposta.construtoras as unknown as { nome: string } | null)?.nome ?? "-"}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-300">
+                    <td className="whitespace-nowrap px-4 py-3 text-[13px] text-zinc-600 dark:text-zinc-300">
                       {(proposta.obras as unknown as { nome: string } | null)?.nome ?? "-"}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-zinc-600 dark:text-zinc-300">
+                    <td className="whitespace-nowrap px-4 py-3 text-[13px] text-zinc-600 dark:text-zinc-300">
                       {formatDate(proposta.data_referencia)}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+                    <td className="whitespace-nowrap px-4 py-3 font-mono text-[13px] font-medium text-zinc-900 dark:text-zinc-100">
                       {formatCurrency(proposta.valor_total)}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">
+                    <td className="whitespace-nowrap px-4 py-3">
                       <span
-                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold capitalize ${getStatusBadge(proposta.status)}`}
+                        className={`inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold capitalize ${getStatusBadge(proposta.status)}`}
                       >
                         {proposta.status}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
+                    <td className="whitespace-nowrap px-4 py-3 text-right">
                       <Link
                         href={`/propostas/${proposta.id}`}
-                        className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+                        className="rounded-md bg-zinc-900 px-3 py-1.5 text-[12px] font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
                       >
                         Ver proposta
                       </Link>
@@ -124,7 +124,7 @@ export default async function PropostasPage() {
           </div>
         ) : (
           <div className="rounded-lg border border-zinc-200 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-800">
-            <p className="text-zinc-500 dark:text-zinc-400">
+            <p className="text-[14px] text-zinc-500 dark:text-zinc-400">
               Nenhuma proposta encontrada.
             </p>
           </div>

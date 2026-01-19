@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ItemsTable } from "./ItemsTable";
+import type { EapPropostaTag } from "../types";
 
 interface EapPadraoItem {
   id: string;
@@ -26,6 +27,8 @@ interface PropostaItem {
   item_status: string | null;
   section_name: string | null;
   proposta_id: string;
+  tag: EapPropostaTag | null;
+  hidden_from_equalization: boolean;
 }
 
 interface Proposta {
@@ -92,7 +95,9 @@ export default async function EqualizacaoDetailPage({
         item_total_price_labor,
         item_total_price_subtotal,
         item_status,
-        section_name
+        section_name,
+        tag,
+        hidden_from_equalization
       )
     `)
     .eq("eap_padrao_id", id);
@@ -113,7 +118,8 @@ export default async function EqualizacaoDetailPage({
 
   for (const eq of equalizacao ?? []) {
     const eapProposta = eq.eap_proposta as unknown as PropostaItem | null;
-    if (!eapProposta) continue;
+    // Skip if no proposta or if item is hidden from equalization
+    if (!eapProposta || eapProposta.hidden_from_equalization) continue;
 
     const propostaId = eapProposta.proposta_id;
     if (!itemsByProposta[propostaId]) {
@@ -150,38 +156,38 @@ export default async function EqualizacaoDetailPage({
     <div className="min-h-screen bg-zinc-50 p-6 dark:bg-zinc-900">
       <div className="mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-5">
           <Link
             href="/equalizacao"
-            className="mb-4 inline-flex items-center text-sm text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+            className="mb-3 inline-flex items-center text-[13px] text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
           >
             ← Voltar para equalização
           </Link>
-          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
+          <h1 className="text-[20px] font-semibold text-zinc-900 dark:text-zinc-50">
             Detalhes do Item
           </h1>
-          <div className="mt-2 flex items-center gap-3">
-            <span className="rounded bg-zinc-200 px-2 py-1 font-mono text-sm text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
+          <div className="mt-2 flex items-center gap-2">
+            <span className="rounded bg-zinc-200 px-2 py-0.5 font-mono text-[12px] text-zinc-700 dark:bg-zinc-700 dark:text-zinc-300">
               {(eapPadrao as EapPadraoItem).caminho}
             </span>
-            <span className="text-lg text-zinc-900 dark:text-zinc-100">
+            <span className="text-[15px] text-zinc-900 dark:text-zinc-100">
               {(eapPadrao as EapPadraoItem).item}
             </span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="mb-6 flex items-center gap-4 text-xs text-zinc-600 dark:text-zinc-400">
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded border-2 border-emerald-500" />
+        <div className="mb-5 flex items-center gap-4 text-[12px] text-zinc-600 dark:text-zinc-400">
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded border-2 border-emerald-500" />
             <span>Menor valor</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded border-2 border-amber-500" />
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded border-2 border-amber-500" />
             <span>Valor intermediário</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="h-3 w-3 rounded border-2 border-rose-500" />
+          <div className="flex items-center gap-1.5">
+            <div className="h-2.5 w-2.5 rounded border-2 border-rose-500" />
             <span>Maior valor</span>
           </div>
         </div>

@@ -1,3 +1,14 @@
+export type EapPropostaTag =
+  | "cortesia"
+  | "estimativa"
+  | "estimativa + pendência"
+  | "não cotado + sob demanda"
+  | "não cotado + pendência"
+  | "opcional"
+  | "opcional + revisar escopo"
+  | "revisar escopo"
+  | "condicional";
+
 export interface Proposta {
   id: string;
   construtora_nome: string;
@@ -8,6 +19,7 @@ export interface LinkedItem {
   id: string;
   item_description: string | null;
   item_total_price_subtotal: number | null;
+  tag: EapPropostaTag | null;
 }
 
 export interface TreeNode {

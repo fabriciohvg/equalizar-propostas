@@ -10,6 +10,7 @@ import {
   ExpandedState,
 } from "@tanstack/react-table";
 import { Sheet } from "@/app/components/Sheet";
+import type { EapPropostaTag } from "../types";
 
 export interface PropostaItem {
   id: string;
@@ -26,6 +27,7 @@ export interface PropostaItem {
   item_total_price_subtotal: number | null;
   item_status: string | null;
   section_name: string | null;
+  tag: EapPropostaTag | null;
 }
 
 export interface WbsLevel1Item {
@@ -44,6 +46,18 @@ interface ItemsTableProps {
 }
 
 const columnHelper = createColumnHelper<PropostaItem>();
+
+const TAG_STYLES: Record<EapPropostaTag, { bg: string; text: string; label: string }> = {
+  cortesia: { bg: "bg-purple-100 dark:bg-purple-900/50", text: "text-purple-700 dark:text-purple-300", label: "Cortesia" },
+  estimativa: { bg: "bg-blue-100 dark:bg-blue-900/50", text: "text-blue-700 dark:text-blue-300", label: "Estimativa" },
+  "estimativa + pendência": { bg: "bg-blue-100 dark:bg-blue-900/50", text: "text-blue-700 dark:text-blue-300", label: "Est+Pend" },
+  "não cotado + sob demanda": { bg: "bg-orange-100 dark:bg-orange-900/50", text: "text-orange-700 dark:text-orange-300", label: "NC+SD" },
+  "não cotado + pendência": { bg: "bg-orange-100 dark:bg-orange-900/50", text: "text-orange-700 dark:text-orange-300", label: "NC+Pend" },
+  opcional: { bg: "bg-zinc-100 dark:bg-zinc-700", text: "text-zinc-600 dark:text-zinc-300", label: "Opcional" },
+  "opcional + revisar escopo": { bg: "bg-zinc-100 dark:bg-zinc-700", text: "text-zinc-600 dark:text-zinc-300", label: "Opc+Rev" },
+  "revisar escopo": { bg: "bg-yellow-100 dark:bg-yellow-900/50", text: "text-yellow-700 dark:text-yellow-300", label: "Rev Escopo" },
+  condicional: { bg: "bg-cyan-100 dark:bg-cyan-900/50", text: "text-cyan-700 dark:text-cyan-300", label: "Condicional" },
+};
 
 function ItemDetailSheet({
   item,
@@ -102,7 +116,7 @@ function ItemDetailSheet({
         <div>
           <label
             htmlFor="wbs-select"
-            className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400"
+            className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400"
           >
             Item EAP Padrão
           </label>
@@ -110,7 +124,7 @@ function ItemDetailSheet({
             id="wbs-select"
             value={selectedWbsId}
             onChange={(e) => setSelectedWbsId(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
+            className="mt-1 block w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-[13px] text-zinc-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-100"
           >
             {wbsLevel1Items.map((wbs) => (
               <option key={wbs.id} value={wbs.id}>
@@ -128,13 +142,13 @@ function ItemDetailSheet({
               key={field.label}
               className={field.fullWidth ? "col-span-2" : ""}
             >
-              <dt className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+              <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                 {field.label}
               </dt>
               <dd
-                className={`mt-1 text-sm ${
+                className={`mt-1 text-[13px] ${
                   field.highlight
-                    ? "text-lg font-bold text-zinc-900 dark:text-zinc-50"
+                    ? "text-[15px] font-semibold text-zinc-900 dark:text-zinc-50"
                     : "text-zinc-900 dark:text-zinc-100"
                 }`}
               >
@@ -204,30 +218,42 @@ export function ItemsTable({
     }),
     columnHelper.accessor("item_description", {
       header: () => (
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Descrição
         </span>
       ),
-      cell: (info) => {
-        const value = info.getValue() ?? "-";
+      cell: ({ row, getValue }) => {
+        const value = getValue() ?? "-";
+        const tag = row.original.tag;
+        const tagStyle = tag ? TAG_STYLES[tag] : null;
         return (
-          <span
-            className="block max-w-[180px] truncate text-xs text-zinc-900 dark:text-zinc-100"
-            title={value}
-          >
-            {value}
-          </span>
+          <div className="flex flex-col gap-0.5">
+            <span
+              className="block max-w-[180px] truncate text-[13px] text-zinc-900 dark:text-zinc-100"
+              title={value}
+            >
+              {value}
+            </span>
+            {tagStyle && tag && (
+              <span
+                className={`inline-flex w-fit rounded px-1 py-0.5 text-[9px] font-medium ${tagStyle.bg} ${tagStyle.text}`}
+                title={tag}
+              >
+                {tagStyle.label}
+              </span>
+            )}
+          </div>
         );
       },
     }),
     columnHelper.accessor("item_total_price_subtotal", {
       header: () => (
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+        <span className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Subtotal
         </span>
       ),
       cell: (info) => (
-        <span className="whitespace-nowrap font-mono text-xs font-medium text-zinc-900 dark:text-zinc-100">
+        <span className="whitespace-nowrap font-mono text-[13px] font-medium text-zinc-900 dark:text-zinc-100">
           {formatCurrency(info.getValue())}
         </span>
       ),
@@ -291,10 +317,10 @@ export function ItemsTable({
       >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+          <h2 className="text-[14px] font-semibold text-zinc-900 dark:text-zinc-50">
             {construtoraNome}
           </h2>
-          <span className="font-mono text-sm font-bold text-zinc-900 dark:text-zinc-50">
+          <span className="font-mono text-[13px] font-semibold text-zinc-900 dark:text-zinc-50">
             {formatCurrency(total)}
           </span>
         </div>
@@ -385,7 +411,7 @@ export function ItemsTable({
           </div>
         ) : (
           <div className="flex flex-1 items-center justify-center p-6">
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-[13px] text-zinc-500 dark:text-zinc-400">
               Nenhum item vinculado.
             </p>
           </div>
@@ -394,7 +420,7 @@ export function ItemsTable({
         {/* Footer with item count */}
         {items.length > 0 && (
           <div className="border-t border-zinc-200 bg-zinc-50 px-3 py-1.5 dark:border-zinc-700 dark:bg-zinc-900">
-            <span className="text-[10px] text-zinc-500 dark:text-zinc-400">
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400">
               {items.length} {items.length === 1 ? "item" : "itens"}
             </span>
           </div>
