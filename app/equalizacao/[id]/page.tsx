@@ -12,12 +12,19 @@ interface EapPadraoItem {
 
 interface PropostaItem {
   id: string;
+  item_number: string | null;
+  item_code: string | null;
   item_description: string | null;
   item_quantity: number | null;
   item_unit: string | null;
   item_unit_price_material: number | null;
   item_unit_price_labor: number | null;
+  item_unit_total_price_subtotal: number | null;
+  item_total_price_material: number | null;
+  item_total_price_labor: number | null;
   item_total_price_subtotal: number | null;
+  item_status: string | null;
+  section_name: string | null;
   proposta_id: string;
 }
 
@@ -55,6 +62,17 @@ export default async function EqualizacaoDetailPage({
     console.error("Error fetching propostas:", propostasError);
   }
 
+  // Fetch level 1 WBS items for the select dropdown
+  const { data: wbsLevel1Items, error: wbsError } = await supabase
+    .from("eap_padrao")
+    .select("id, caminho, item")
+    .eq("nivel", 1)
+    .order("caminho", { ascending: true });
+
+  if (wbsError) {
+    console.error("Error fetching WBS level 1 items:", wbsError);
+  }
+
   // Fetch linked items from eap_equalizacao
   const { data: equalizacao, error: equalizacaoError } = await supabase
     .from("eap_equalizacao")
@@ -62,12 +80,19 @@ export default async function EqualizacaoDetailPage({
       eap_proposta (
         id,
         proposta_id,
+        item_number,
+        item_code,
         item_description,
         item_quantity,
         item_unit,
         item_unit_price_material,
         item_unit_price_labor,
-        item_total_price_subtotal
+        item_unit_total_price_subtotal,
+        item_total_price_material,
+        item_total_price_labor,
+        item_total_price_subtotal,
+        item_status,
+        section_name
       )
     `)
     .eq("eap_padrao_id", id);
@@ -174,6 +199,8 @@ export default async function EqualizacaoDetailPage({
                   items={items}
                   total={total}
                   borderColor={getBorderColor(total)}
+                  currentEapPadraoId={id}
+                  wbsLevel1Items={wbsLevel1Items ?? []}
                 />
               </div>
             );
